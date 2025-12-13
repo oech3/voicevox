@@ -455,7 +455,7 @@ jobs:
             echo "Splitting ${appImageFile}"
 
             # Split to *.AppImage{1,2,...}
-            split -b 1900 -d -a 1 "${{ matrix.linux_appimage_name }}" "${{ matrix.linux_appimage_name }}"
+            split -b 1900 -d -a 1 "${appImageFile}" "${{ matrix.linux_appimage_name }}"
 
             # Output split archive name<TAB>size<TAB>hash list to myartifact.txt
             ls "${{ matrix.linux_appimage_name }}"* > archives_name.txt
