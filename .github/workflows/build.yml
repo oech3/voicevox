@@ -460,9 +460,9 @@ jobs:
             # Output split archive name<TAB>size<TAB>hash list to myartifact.txt
             ls "${{ matrix.linux_appimage_name }}"* > archives_name.txt
             stat --printf="%s\n" "${{ matrix.linux_appimage_name }}"* > archives_size.txt
-            md5sum "${{ matrix.linux_appimage_name }}"* | awk '{print $1}' | tr a-z A-Z > archives_hash.txt
+            sha256sum "${{ matrix.linux_appimage_name }}"* | awk '{print $1}' | tr a-z A-Z > archives_hash.txt
 
-            paste -d '\t' archives_name.txt archives_size.txt archives_hash.txt > "${{ matrix.installer_artifact_name }}.txt"
+            paste -d '\t' archives_name.txt archives_size.txt archives_hash.txt > "${{ matrix.installer_artifact_name }}.AppImage.sha256sums"
           done
 
       - name: Create Linux installer
