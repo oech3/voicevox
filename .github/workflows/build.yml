@@ -466,7 +466,7 @@ jobs:
           sed \
             -e 's/^NAME=@@PLACEHOLDER@@ # placeholder for CI$/NAME="${{ matrix.installer_artifact_name }}"/' \
             -e 's/^VERSION=@@PLACEHOLDER@@ # placeholder for CI$/VERSION="${{ env.VOICEVOX_EDITOR_VERSION }}"/' \
-            -e 's/^SPLIT=@@SPLIT@@ # placeholder for CI$/SPLIT="${splitnum}"/' \
+            -e "s/^SPLIT=@@SPLIT@@ # placeholder for CI$/SPLIT=${splitnum}/" \
             build/linux/installer_linux.template.sh > VOICEVOX.${{ matrix.installer_artifact_name }}.${{ env.VOICEVOX_EDITOR_VERSION }}.sh
 
           # Check that placeholders were replaced
