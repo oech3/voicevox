@@ -474,7 +474,7 @@ jobs:
         with:
           name: ${{ matrix.installer_artifact_name }}-release
           path: |-
-            dist_electron/*.AppImage.*
+            dist_electron/*.AppImage*
             VOICEVOX.${{ matrix.installer_artifact_name }}.${{ env.VOICEVOX_EDITOR_VERSION }}.sh
 
       - name: Upload Linux AppImage split and installer to Release Assets
@@ -484,7 +484,7 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease }}
           tag_name: ${{ env.VOICEVOX_EDITOR_VERSION }}
           files: |-
-            dist_electron/*.AppImage.*
+            dist_electron/*.AppImage*
             VOICEVOX.${{ matrix.installer_artifact_name }}.${{ env.VOICEVOX_EDITOR_VERSION }}.sh
           target_commitish: ${{ github.sha }}
 
