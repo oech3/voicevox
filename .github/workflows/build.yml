@@ -458,7 +458,7 @@ jobs:
             split -d -b 1900m "${appImageFile}" "${{ matrix.linux_appimage_name }}."
 
             # Calc checksum of original file by same func with GitHub
-            sha256sum ${appImageFile} > "${{ matrix.installer_artifact_name }}.AppImage.sha256sum"
+            sha256sum ${appImageFile} | cut -d ' ' -f 1 > "${{ matrix.installer_artifact_name }}.AppImage.sha256sum"
           done
 
       - name: Create Linux installer
