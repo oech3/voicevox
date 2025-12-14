@@ -28,7 +28,7 @@ BANNER
 NAME=@@PLACEHOLDER@@ # placeholder for CI
 VERSION=@@PLACEHOLDER@@ # placeholder for CI
 SPLIT=@@SPLIT@@ # placeholder for CI
-REPO_URL=${REPO_URL:-https://github.com/VOICEVOX/voicevox}
+REPO_URL=${REPO_URL:-https://github.com/oech3/voicevox}
 
 # Install directory
 APP_DIR=${APP_DIR:-$HOME/.voicevox}
@@ -89,16 +89,16 @@ cd "${APP_DIR}"
 
 
 # Download separated AppImages and verify it
-curl --fail -L -o ${NAME}.sha256sum ${REPO_URL}/releases/download/${VERSION}/${NAME}.sha256sum
+curl --fail -L -o sha ${REPO_URL}/releases/download/${VERSION}/${NAME}.AppImage.sha256sum
 # Download AppImage if missing or broken
-if [ "$(cat ${NAME}.sha256sum)" = "$(sha256sum ${NAME}.AppImage)" ];then
+if [ "$(cat sha)" != "$(sha256sum ${NAME}.AppImage)" ];then
     rm -f ${NAME}.AppImage
     # Do not put duplicated large files on the disk
-    for s in $(seq 1 $(( ${SPLIT} - 1 )) );do
-        curl --fail -L https://github.com/VOICEVOX/voicevox/releases/download/${VERSION}/${NAME}.AppImage.${s} > ${NAME}.AppImage
+    for s in $(seq 0 $(( ${SPLIT} - 1 )) );do
+        curl --fail -L ${REPO_URL}/releases/download/${VERSION}/${NAME}.AppImage.0${s} >> ${NAME}.AppImage
     done
 fi
-test $(cat ${NAME}.sha256sum) = $(sha256sum ${NAME}.AppImage) || (echo "Checksum mismatch. Please retry." ;exit 1)
+[ $(cat sha) != $(sha256sum ${NAME}.AppImage) ] || (echo "Checksum mismatch. Please retry." ;exit 1)
 
 # Rename
 APPIMAGE="VOICEVOX.AppImage"
