@@ -462,7 +462,7 @@ jobs:
       - name: Create Linux installer
         if: endsWith(matrix.installer_artifact_name, '-appimage')
         run: |
-          splitnum=$(cat "${{ matrix.installer_artifact_name }}"_split)
+          splitnum=$(cat dist_electron/"${{ matrix.installer_artifact_name }}"_split)
           sed \
             -e 's/^NAME=@@PLACEHOLDER@@ # placeholder for CI$/NAME="${{ matrix.installer_artifact_name }}"/' \
             -e 's/^VERSION=@@PLACEHOLDER@@ # placeholder for CI$/VERSION="${{ env.VOICEVOX_EDITOR_VERSION }}"/' \
