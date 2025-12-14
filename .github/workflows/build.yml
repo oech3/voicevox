@@ -59,7 +59,7 @@ jobs:
             installer_artifact_name: linux-nvidia-appimage
             linux_artifact_name: "VOICEVOX.${ext}"
             linux_executable_name: voicevox
-            linux_appimage_7z_name: VOICEVOX.AppImage
+            linux_appimage_name: VOICEVOX.AppImage
             os: ubuntu-22.04
           # Linux CPU (x64)
           - artifact_name: linux-cpu-x64-prepackage
@@ -71,7 +71,7 @@ jobs:
             installer_artifact_name: linux-cpu-x64-appimage
             linux_artifact_name: "VOICEVOX.${version}-x64.${ext}"
             linux_executable_name: voicevox
-            linux_appimage_7z_name: VOICEVOX-CPU-X64.AppImage
+            linux_appimage_name: VOICEVOX-CPU-X64.AppImage
             os: ubuntu-22.04
           # Linux CPU (arm64)
           - artifact_name: linux-cpu-arm64-prepackage
@@ -83,7 +83,7 @@ jobs:
             installer_artifact_name: linux-cpu-arm64-appimage
             linux_artifact_name: "VOICEVOX.${version}-arm64.${ext}"
             linux_executable_name: voicevox
-            linux_appimage_7z_name: VOICEVOX-CPU-ARM64.AppImage
+            linux_appimage_name: VOICEVOX-CPU-ARM64.AppImage
             os: ubuntu-22.04-arm
           # Windows CUDA
           - artifact_name: windows-nvidia-prepackage
@@ -454,19 +454,11 @@ jobs:
           for appImageFile in *.AppImage; do
             echo "Splitting ${appImageFile}"
 
-            # Split to MyArtifact.AppImage.7z.001, MyArtifact.AppImage.7z.002, ...
-            # Use compression level 0 since AppImage is already compressed
-            # .7z is needed for installer_linux.sh yet
-            7z -mx=0 -v1900m a "${{ matrix.linux_appimage_7z_name }}.7z" "${appImageFile}"
+            # Split to *.AppImage.{1,2,...}
+            split -d -b 1900m "${appImageFile}" "${{ matrix.linux_appimage_name }}."
 
-            # Output split archive name<TAB>size<TAB>hash list to myartifact.7z.txt
-            ls "${{ matrix.linux_appimage_7z_name }}.7z".* > archives_name.txt
-            stat --printf="%s\n" "${{ matrix.linux_appimage_7z_name }}.7z".* > archives_size.txt
-            md5sum "${{ matrix.linux_appimage_7z_name }}.7z".* | awk '{print $1}' | tr a-z A-Z > archives_hash.txt
-
-            paste -d '\t' archives_name.txt archives_size.txt archives_hash.txt > archives.txt
-
-            mv archives.txt "${{ matrix.installer_artifact_name }}.7z.txt"
+            # Calc checksum of original file by same func with GitHub
+            sha256sum ${appImageFile} > "${{ matrix.installer_artifact_name }}.AppImage.sha256sum"
           done
 
       - name: Create Linux installer
@@ -486,7 +478,7 @@ jobs:
         with:
           name: ${{ matrix.installer_artifact_name }}-release
           path: |-
-            dist_electron/*.7z.*
+            dist_electron/*.AppImage.*
             VOICEVOX.${{ matrix.installer_artifact_name }}.${{ env.VOICEVOX_EDITOR_VERSION }}.sh
 
       - name: Upload Linux AppImage split and installer to Release Assets
@@ -496,7 +488,7 @@ jobs:
           prerelease: ${{ github.event.inputs.prerelease }}
           tag_name: ${{ env.VOICEVOX_EDITOR_VERSION }}
           files: |-
-            dist_electron/*.7z.*
+            dist_electron/*.AppImage.*
             VOICEVOX.${{ matrix.installer_artifact_name }}.${{ env.VOICEVOX_EDITOR_VERSION }}.sh
           target_commitish: ${{ github.sha }}
 
