@@ -27,7 +27,7 @@ BANNER
 
 NAME=@@PLACEHOLDER@@ # placeholder for CI
 VERSION=@@PLACEHOLDER@@ # placeholder for CI
-SPLIT=@@SPLIT@@
+SPLIT=@@SPLIT@@ # placeholder for CI
 REPO_URL=${REPO_URL:-https://github.com/VOICEVOX/voicevox}
 
 # Install directory
