@@ -455,6 +455,8 @@ jobs:
 
             # Calc checksum of original file by same func with GitHub
             sha256sum ${appImageFile} | cut -d ' ' -f 1 > "${{ matrix.installer_artifact_name }}.AppImage.sha256sum"
+            # Save runner's disk space and make release pattern simpler
+            rm ${appImageFile}
           done
 
       - name: Create Linux installer
