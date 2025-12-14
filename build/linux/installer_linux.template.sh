@@ -94,7 +94,7 @@ curl --fail -L -o ${NAME}.sha256sum ${REPO_URL}/releases/download/${VERSION}/${N
 if [ "$(cat ${NAME}.sha256sum)" = "$(sha256sum ${NAME}.AppImage)" ];then
     rm -f ${NAME}.AppImage
     # Do not put duplicated large files on the disk
-    for s in $(seq 1 ${SPLIT});do
+    for s in $(seq 1 $(( ${SPLIT} - 1 )) );do
         curl --fail -L https://github.com/VOICEVOX/voicevox/releases/download/${VERSION}/${NAME}.AppImage.${s} > ${NAME}.AppImage
     done
 fi
