@@ -462,10 +462,11 @@ jobs:
       - name: Create Linux installer
         if: endsWith(matrix.installer_artifact_name, '-appimage')
         run: |
+          splitnum=$(cat "${{ matrix.installer_artifact_name }}"_split)
           sed \
             -e 's/^NAME=@@PLACEHOLDER@@ # placeholder for CI$/NAME="${{ matrix.installer_artifact_name }}"/' \
             -e 's/^VERSION=@@PLACEHOLDER@@ # placeholder for CI$/VERSION="${{ env.VOICEVOX_EDITOR_VERSION }}"/' \
-            -e 's/^SPLIT=@@SPLIT@@ # placeholder for CI$/SPLIT=$(cat "${{ matrix.installer_artifact_name }}"_split)/' \
+            -e 's/^SPLIT=@@SPLIT@@ # placeholder for CI$/SPLIT="${splitnum}"/' \
             build/linux/installer_linux.template.sh > VOICEVOX.${{ matrix.installer_artifact_name }}.${{ env.VOICEVOX_EDITOR_VERSION }}.sh
 
           # Check that placeholders were replaced
