@@ -120,7 +120,7 @@ fi
 echo "[-] 7z command: ${COMMAND_7Z}"
 
 RELEASE_URL=${REPO_URL}/releases/download/${VERSION}
-ARCHIVE_LIST_URL=${RELEASE_URL}/${NAME}.7z.txt
+ARCHIVE_LIST_URL=${RELEASE_URL}/${NAME}.7z.sha256
 
 echo "[-] Install directory: ${APP_DIR}"
 mkdir -p "${APP_DIR}"
@@ -178,49 +178,13 @@ for index in "${!ARCHIVE_LIST[@]}"; do
         mv "${FILENAME}.tmp" "${FILENAME}"
     fi
 
-    # File verification (size, md5 hash)
+    # File verification
     if [ "$SKIP_VERIFY" = "1" ]; then
         echo "[-] File verification skipped"
     else
-        if [ "$SIZE" != "x" ]; then
-            echo "[+] Verifying size == ${SIZE}..."
-            if stat --version &>/dev/null; then
-                DOWNLOADED_SIZE=$(stat --printf="%s" "${FILENAME}")
-            else
-                DOWNLOADED_SIZE=$(stat -f%z "${FILENAME}")
-            fi
-
-            if [ "$DOWNLOADED_SIZE" = "$SIZE" ]; then
-                echo "[-] Size OK"
-            else
-                cat << EOS && exit 1
-[!] Invalid size: ${DOWNLOADED_SIZE} != ${SIZE}
-
-Remove the corrupted file and restart installer!
-
-    rm $(realpath "${FILENAME}")
-
-EOS
-            fi
-        fi
-
-        if [ "$HASH" != "x" ]; then
-            echo "[+] Verifying hash == ${HASH}..."
-            DOWNLOADED_HASH=$(md5sum "${FILENAME}" | awk '$0=$1' | tr '[:lower:]' '[:upper:]')
-            if [ "$DOWNLOADED_HASH" = "$HASH" ]; then
-                echo "[-] Hash OK"
-            else
-                cat << EOS && exit 1
-[!] Invalid hash: ${DOWNLOADED_HASH} != ${HASH}
-
-Remove the corrupted file and restart installer!
-
-    rm $(realpath "${FILENAME}")
-
-EOS
-            fi
-        fi
+        sha256sum --check list.txt || (echo "Remove the corrupted files and restart installer!";exit 1)
     fi
+
 done
 
 # Extract archives
